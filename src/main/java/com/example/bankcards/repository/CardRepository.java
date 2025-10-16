@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
     Page<Card> findAllByOwner(User owner, Pageable pageable);
+    boolean existsByNumber(String number);
+    void deleteAll();
 }

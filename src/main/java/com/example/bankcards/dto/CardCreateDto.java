@@ -12,6 +12,6 @@ import java.time.LocalDate;
 public class CardCreateDto {
     private String number;
     private String ownerUsername;
-    private LocalDate expiryDate;
+    private String validTill;
     private BigDecimal balance;
 }

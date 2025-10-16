@@ -1,6 +1,8 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,36 +18,25 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/get/all")
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     public User createUser(@RequestParam String username,
                            @RequestParam String password,
                            @RequestParam String role) {
         return userService.createUser(username, password, role.equalsIgnoreCase("ADMIN") ?
-                com.example.bankcards.entity.Role.ADMIN : com.example.bankcards.entity.Role.USER);
+                Role.ROLE_ADMIN : Role.ROLE_USER);
     }
 
-    @DeleteMapping("/all")
+    @PostMapping("/delete/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteAllUsers() {
         userService.deleteAllUsers();
         return ResponseEntity.ok("Все пользователи удалены");
-    }
-
-    @PutMapping("/{id}/block")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void blockUser(@PathVariable Long id) {
-        userService.blockUser(id);
-    }
-
-    @PutMapping("/{id}/unblock")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void unblockUser(@PathVariable Long id) {
-        userService.unblockUser(id);
     }
 }

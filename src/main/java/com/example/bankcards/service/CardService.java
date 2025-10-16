@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -24,19 +27,32 @@ public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
 
+    public void deleteAllCard() {
+        cardRepository.deleteAll();
+    }
+
     // ================= ADMIN =================
     @Transactional
     public CardDto createCard(CardCreateDto dto) {
         User owner = userRepository.findByUsername(dto.getOwnerUsername())
                 .orElseThrow(() -> new CustomException("Пользователь не найден"));
 
+        if (cardRepository.existsByNumber(dto.getNumber())) {
+            throw new CustomException("Карта с таким номером уже существует");
+        }
+
+        YearMonth ym = YearMonth.parse(dto.getValidTill(), DateTimeFormatter.ofPattern("MM/yy"));
+        LocalDate expiryDate = ym.atEndOfMonth();
+
         Card card = Card.builder()
                 .number(dto.getNumber()) // здесь можно добавить шифрование
                 .owner(owner)
-                .expiryDate(dto.getExpiryDate())
+                .expiryDate(expiryDate)
                 .balance(dto.getBalance())
                 .status(CardStatus.ACTIVE)
                 .build();
+
+        System.err.println("Creating card for user: " + owner.getUsername() + " with number: " + card.getNumber());
 
         return mapToDto(cardRepository.save(card));
     }
@@ -50,7 +66,7 @@ public class CardService {
     }
 
     @Transactional
-    public void activateCard(Long cardId) {
+    public void unblockCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new CustomException("Карта не найдена"));
         card.setStatus(CardStatus.ACTIVE);
@@ -68,7 +84,7 @@ public class CardService {
         return cardRepository.findAll(pageable).map(this::mapToDto);
     }
 
-    // ================= USER =================
+    /// ================= USER =================
     public Page<CardDto> getUserCards(User user, Pageable pageable) {
         return cardRepository.findAllByOwner(user, pageable).map(this::mapToDto);
     }

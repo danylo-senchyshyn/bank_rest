@@ -1,0 +1,106 @@
+### Логин ROLE_ADMIN
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "3243"
+}
+> {% client.global.set("adminToken", response.body.token) %}
+
+### Логин ROLE_USER
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "3243"
+}
+> {% client.global.set("userToken", response.body.token) %}
+
+### GET ALL Users
+GET http://localhost:8080/api/users/get/all
+Authorization: Bearer {{adminToken}}
+
+### DELETE ALL USERS
+DELETE http://localhost:8080/api/users/delete/all
+Accept: application/json
+
+### Регистрация ROLE_USER
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "3243",
+  "role": "ROLE_USER"
+}
+
+### Создаем карту ADMIN
+POST http://localhost:8080/api/cards/create
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "ownerUsername": "admin",
+  "number": "1234567812345678",
+  "validTill": "12/28",
+  "balance": 1000.0
+}
+
+### Создаем карту USER
+POST http://localhost:8080/api/cards
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "ownerUsername": "user",
+  "number": "1234567812345677",
+  "validTill": "12/28",
+  "balance": 1000.0
+}
+
+### GET ALL Cards
+GET http://localhost:8080/api/cards/all
+Authorization: Bearer {{adminToken}}
+
+### BLOCK Card
+PUT http://localhost:8080/api/cards/11/block
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### UNBLOCK Card
+PUT http://localhost:8080/api/cards/11/unblock
+Authorization: Bearer {{adminToken}}
+Accept: application/json
+
+### GET MY CARDS (USER)
+GET http://localhost:8080/api/cards
+Authorization: Bearer {{userToken}}
+Accept: application/json
+
+### requestBlock Card (USER)
+PUT http://localhost:8080/api/cards/11/requestBlock
+Authorization: Bearer {{userToken}}
+Accept: application/json
+
+### GET BALANCE (USER)
+GET http://localhost:8080/api/cards/11/balance
+Authorization: Bearer {{userToken}}
+Accept: application/json
+
+### TRANSFER MONEY (USER)
+POST http://localhost:8080/api/cards/transfer
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "fromCardId": 11,
+  "toCardId": 12,
+  "amount": 100.0
+}
+
+### DELETE CARD (ADMIN)
+DELETE http://localhost:8080/api/cards/12
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json

@@ -1,8 +1,11 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.CustomException;
+import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CardRepository cardRepository;
 
     // Найти пользователя по username
     public User findByUsername(String username) {
@@ -36,6 +40,8 @@ public class UserService {
                 .active(true)
                 .build();
 
+        System.err.println("Creating user: " + user.getUsername() + " with role: " + user.getRole());
+
         return userRepository.save(user);
     }
 
@@ -44,21 +50,6 @@ public class UserService {
         userRepository.deleteAll();
     }
 
-    // Заблокировать пользователя
-    public void blockUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException("Пользователь не найден"));
-        user.setActive(false);
-        userRepository.save(user);
-    }
-
-    // Разблокировать пользователя
-    public void unblockUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException("Пользователь не найден"));
-        user.setActive(true);
-        userRepository.save(user);
-    }
 
     // Получить всех пользователей (для админа)
     public List<User> getAllUsers() {

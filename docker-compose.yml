@@ -15,13 +15,20 @@ services:
       - bank-network
 
   app:
-    image: openjdk:17
-    container_name: bank_app
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: bank_app
+    restart: always
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank_db
+      SPRING_DATASOURCE_USERNAME: danylo-senchyshyn
+      SPRING_DATASOURCE_PASSWORD: 3243
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      JWT_SECRET: 2W5its7iTN0BSAdtlDa1Y1wmDu1CvNTHKl09teBZmCw=
+      JWT_EXPIRATIONMS: 86400000
     depends_on:
       - db
     networks:

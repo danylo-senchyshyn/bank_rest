@@ -1,15 +1,28 @@
 package com.example.bankcards.util;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+@Component
 public class EncryptionUtil {
 
     private static final String ALGO = "AES";
-    private static final String SECRET = "1234567890123456"; // 16 байт, можно хранить в application.properties
+
+    private static String SECRET;
+
+    @Value("${jwt.secret}")
+    private String secretFromProperties;
+
+    @PostConstruct
+    private void init() {
+        SECRET = secretFromProperties;
+    }
 
     public static String encrypt(String data) {
         try {

@@ -32,7 +32,7 @@ public class AuthController {
             String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
             return ResponseEntity.ok(new AuthResponseDto(token));
         } catch (CustomException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // или вернуть сообщение e.getMessage()
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
