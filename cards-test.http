@@ -1,0 +1,54 @@
+### Удаляем всех пользователей (для тестов)
+DELETE http://localhost:8080/api/test/users
+Accept: application/json
+
+### Регистрация пользователя ADMIN
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "3243",
+  "role": "ADMIN"
+}
+
+### Регистрация пользователя USER
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "3243",
+  "role": "USER"
+}
+
+### Логин пользователя USER и сохранение токена
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "3243"
+}
+> {% client.global.set("token", response.body.token) %}
+
+### Логин пользователя ADMIN и сохранение токена
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "3243"
+}
+> {% client.global.set("token", response.body.token) %}
+
+### Создание карты через ADMIN
+POST http://localhost:8080/api/cards
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "owner": "user",
+  "validTill": "12/28",
+  "balance": 1000.0
+}

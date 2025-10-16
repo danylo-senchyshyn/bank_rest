@@ -1,5 +1,91 @@
-### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=IntelliJ IDEA
+### Удаляем всех пользователей (для тестов)
+DELETE http://localhost:8080/api/test/users
+Accept: application/json
 
-###
+### Регистрация пользователя ADMIN
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "3243",
+  "role": "ADMIN"
+}
+
+### Регистрация пользователя USER
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "3243",
+  "role": "USER"
+}
+
+### Логин пользователя ADMIN и сохранение токена
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "3243"
+}
+> {% client.global.set("token", response.body.token) %}
+
+### Логин пользователя USER и сохранение токена
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "3243"
+}
+> {% client.global.set("token", response.body.token) %}
+
+### Получить список всех пользователей (только с JWT)
+GET http://localhost:8080/api/users
+Authorization: Bearer {{token}}
+
+### ----------------------------- Карты ----------------------------
+
+### 4️⃣ Создание карты (ADMIN)
+POST http://localhost:8080/api/cards
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "owner": "user",
+  "validTill": "12/28",
+  "balance": 1000.0
+}
+
+### 5️⃣ Просмотр всех карт (ADMIN)
+GET http://localhost:8080/api/cards
+Authorization: Bearer {{token}}
+
+### 6️⃣ Блокировка карты (ADMIN)
+PATCH http://localhost:8080/api/cards/1/block
+Authorization: Bearer {{token}}
+
+### 7️⃣ Активация карты (ADMIN)
+PATCH http://localhost:8080/api/cards/1/activate
+Authorization: Bearer {{token}}
+
+### 8️⃣ Запрос блокировки карты (USER)
+POST http://localhost:8080/api/cards/1/request-block
+Authorization: Bearer {{token}}
+
+### 9️⃣ Перевод между своими картами (USER)
+POST http://localhost:8080/api/cards/transfer
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fromCardId": 1,
+  "toCardId": 2,
+  "amount": 200.0
+}
+
+### 10️⃣ Получение карт с фильтром по статусу
+GET http://localhost:8080/api/cards?status=ACTIVE
+Authorization: Bearer {{token}}
