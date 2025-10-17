@@ -1,63 +1,63 @@
-# Bank REST API
+# Banking REST API
 
-Простой REST API для управления пользователями и банковскими картами с ролями `ROLE_ADMIN` и `ROLE_USER`, реализованный на **Spring Boot**, **PostgreSQL**, с использованием **JWT** для аутентификации и **Liquibase** для миграций базы данных.
-
----
-
-## Оглавление
-
-- [Описание проекта](#описание-проекта)
-- [Технологии](#технологии)
-- [Запуск проекта](#запуск-проекта)
-- [Структура проекта](#структура-проекта)
-- [API](#api)
-- [Роли и права](#роли-и-права)
+A simple REST API for managing users and bank cards with the `ROLE_ADMIN` and `ROLE_USER` roles, implemented in **Spring Boot**, **PostgreSQL**, using **JWT** for authentication and **Liquibase** for database migration.
 
 ---
 
-## Описание проекта
+## Title
 
-Проект представляет собой банковскую систему с базовой функциональностью:
-
-- Регистрация и логин пользователей (`ADMIN` и `USER`)
-- Управление пользователями (`ADMIN`)
-- Создание, блокировка, разблокировка карт (`ADMIN`)
-- Просмотр и управление своими картами (`USER`)
-- Переводы между картами (`USER`)
-- Логи и управление транзакциями через базу данных
+- [Project Description](#project-description)  
+- [Technologies](#technologies)  
+- [Project Launch](#project-launch)  
+- [Project Structure](#project-structure)  
+- [API](#api)  
+- [Roles and Permissions](#roles-and-permissions)  
 
 ---
 
-## Технологии
+## Project Description
 
-- **Java 17**
-- **Spring Boot 3**
-- **Spring Security + JWT**
-- **Spring Data JPA / Hibernate**
-- **PostgreSQL**
-- **Liquibase**
-- **Docker / Docker Compose** (для базы данных)
-- **REST API**
-- **Maven** (сборка проекта)
+The project is a banking system with basic functionality:
+
+- User registration and login (`ADMIN` and `USER`)  
+- User management (`ADMIN`)  
+- Card creation, blocking, and unblocking (`ADMIN`)  
+- Viewing and managing your cards (`USER`)  
+- Transfers between cards (`USER`)  
+- Transaction logs and management via database  
 
 ---
 
-## Запуск проекта
+## Technologies
 
-### 1. Клонирование репозитория
+- **Java 17**  
+- **Spring Boot 3**  
+- **Spring Security + JWT**  
+- **Spring Data JPA / Hibernate**  
+- **PostgreSQL**  
+- **Liquibase**  
+- **Docker / Docker Compose** (for the database)  
+- **REST API**  
+- **Maven** (project build)  
+
+---
+
+## Running the Project
+
+### 1. Cloning the Repository
 ```bash
-git clone <твоя ссылка на репозиторий>
+git clone <your repository link>
 cd bank_rest
 ```
 
-### 2. Запуск PostgreSQL через Docker
+### 2. Running PostgreSQL via Docker
 ```bash
 docker compose up -d
 ```
 
-### 3. Настройка application.properties
+### 3. Configuring Application.yml
 
-Проверьте подключение к базе данных:
+Testing the Database Connection:
 ```yaml
 spring:
   datasource:
@@ -67,69 +67,69 @@ spring:
     driver-class-name: org.postgresql.Driver
 ```
 
-### 4. Запуск приложения
+### 4. Running the Application
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
-Приложение будет доступно на http://localhost:8080
+The application will be available at http://localhost:8080
 
 ⸻
 
-### Структура проекта
+### Project Structure
 ```
 src/main/java/com/example/bankcards
-├─ controller      # REST контроллеры
-├─ dto             # DTO объекты
-├─ entity          # Сущности JPA
-├─ repository      # Репозитории JPA
-├─ security        # JWT, SecurityConfig, фильтры
-├─ service         # Сервисы бизнес-логики
-└─ BankRestApplication.java # Главный класс приложения
+├─ controller      # REST controllers
+├─ dto             # DTO objects
+├─ entity          # JPA entities
+├─ repository      # JPA repositories
+├─ security        # JWT, SecurityConfig, filters
+├─ service         # Services Business logic
+└─ BankRestApplication.java # Main application class
 
 src/main/resources
-├─ db/migration    # Liquibase миграции
-└─ application.properties
+├─ db/migration    # Liquibase migration
+└─ application.yml
 ```
 
 ## API
 
-### Регистрация ADMIN
+### ADMIN Registration
 ```
 POST /api/auth/register
 ```
 
-### Регистрация USER
+### USER Registration
 ```
 POST /api/auth/register
 ```
 
-### Логин
+### Login
 ```
 POST /api/auth/login
 ```
 
 ⸻
 
-### Пользователи (только ADMIN)
-•	GET `/api/users/get/all` — Получить всех пользователей    
-•	DELETE `/api/users/delete/all` — Удалить всех пользователей   
+### Users (admin only)
+•	GET `/api/users/get/all` — Get all users  
+•	DELETE `/api/users/delete/all` — Delete all users 
 
 ⸻
 
-### Карты
-•	POST `/api/cards/create` — Создать карту (ADMIN)  
-•	POST `/api/cards` — Создать карту для пользователя (ADMIN)    
-•	GET `/api/cards/all` — Получить все карты (ADMIN)     
-•	PUT `/api/cards/{cardId}/block` — Заблокировать карту (ADMIN)     
-•	PUT `/api/cards/{cardId}/unblock` — Разблокировать карту (ADMIN)      
-•	GET `/api/cards` — Получить свои карты (USER)          
-•	PUT `/api/cards/{cardId}/requestBlock` — Запрос на блокировку карты (USER)    
-•	GET `/api/cards/{cardId}/balance` — Получить баланс карты (USER)  
-•	POST `/api/cards/transfer` — Перевод денег с карты на карту (USER)    
-•	DELETE `/api/cards/{cardId}` — Удалить карту (ADMIN)  
+### Cards
+• POST `/api/cards/create` — Create a card (ADMIN)    
+• POST `/api/cards` — Create a card for a user (ADMIN)  
+• GET `/api/cards/all` — Get all cards (ADMIN)  
+• PUT `/api/cards/{cardId}/block` — Block a card (ADMIN).  
+• PUT `/api/cards/{cardId}/unblock` — Unblock a card (ADMIN).  
+• GET `/api/cards` — Get your cards (USER)  
+• PUT `/api/cards/{cardId}/requestBlock` — Request to block a card (USER)  
+• GET `/api/cards/{cardId}/balance` — Get a card balance (USER)  
+• POST `/api/cards/transfer` — Transfer money from card to card (USER)  
+• DELETE `/api/cards/{cardId}` — Delete a card (ADMIN).  
 
-### Пример запроса перевода денег:
+### Money transfer example request:
 ```json
 {
   "fromCardId": 11,
@@ -138,13 +138,13 @@ POST /api/auth/login
 }
 ```
 
-### Роли и права
+### Roles and Permissions
 
-Роль            Доступные действия  
-ROLE_ADMIN      Управление пользователями, создание и блокировка карт   
-ROLE_USER       Просмотр своих карт, баланс, запрос блокировки, переводы    
+Role         Available Actions  
+ROLE_ADMIN   User management, card creation and blocking  
+ROLE_USER    View card symbol, balance, block request, transfers    
 
-### Примечания
-•	JWT токен требуется во всех защищённых эндпоинтах (Authorization: Bearer <token>)   
-•	Все изменения базы данных выполняются через Liquibase   
-•	Администратор создаётся при первом запуске приложения через миграции или вручную через /auth/register   
+### Notes
+• A JWT token is required for all secure endpoints (authorization: bearer <token>).  
+• All database changes are performed through Liquibase.  
+• An administrator is created by pre-authorizing the application via a conference or manually via /auth/register.  
