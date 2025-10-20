@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * The type Transfer dto.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

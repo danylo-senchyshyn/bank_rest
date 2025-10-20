@@ -5,6 +5,9 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * The type Card dto.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

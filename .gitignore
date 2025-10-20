@@ -1,0 +1,59 @@
+# ========================
+# Maven
+# ========================
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/MavenWrapperDownloader.java
+
+# ========================
+# IntelliJ IDEA
+# ========================
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+*.log.*
+*.out
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Environment / Credentials
+# ========================
+.env
+application-local.properties
+application-dev.properties
+
+# ========================
+# Docker
+# ========================
+/docker-compose.override.yml
+*.pid
+
+# ========================
+# Liquibase / DB temp
+# ========================
+/liquibase/changelog.lock
+/liquibase/changelog.xml.bak
+/liquibase/*.backup
+
+# ========================
+# Misc
+# ========================
+/bin/
+/tmp/
+/node_modules/
+/dist/
+/build/

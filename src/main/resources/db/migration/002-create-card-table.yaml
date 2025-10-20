@@ -2,6 +2,11 @@ databaseChangeLog:
   - changeSet:
       id: 002
       author: admin
+      preConditions:
+        onFail: MARK_RAN
+          - not:
+              tableExists:
+                tableName: cards
       changes:
         - createTable:
             tableName: cards
@@ -25,17 +30,19 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: expiry_date
-                  type: DATE
+                  type: VARCHAR(5)
                   constraints:
                     nullable: false
               - column:
                   name: status
                   type: VARCHAR(20)
+                  defaultValue: "ACTIVE"
                   constraints:
                     nullable: false
               - column:
                   name: balance
                   type: NUMERIC(15,2)
+                  defaultValueNumeric: 0.0
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:

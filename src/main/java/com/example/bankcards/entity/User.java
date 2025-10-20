@@ -5,9 +5,13 @@ import lombok.*;
 
 import java.util.Set;
 
+/**
+ * The type User.
+ */
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

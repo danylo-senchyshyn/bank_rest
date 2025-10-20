@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+/**
+ * The type Card controller.
+ */
 @RestController
 @RequestMapping("/api/cards")
 @RequiredArgsConstructor
@@ -24,41 +27,71 @@ public class CardController {
     private final CardService cardService;
     private final UserService userService;
 
-    // ================= ADMIN =================
+    /**
+     * Create card card dto.
+     *
+     * @param dto the dto
+     * @return the card dto
+     */
+// ================= ADMIN =================
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public CardDto createCard(@RequestBody CardCreateDto dto) {
         return cardService.createCard(dto);
     }
 
+    /**
+     * Block card response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @PutMapping("/block/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> blockCard(@PathVariable Long id) {
         if (id == null) {
-            return ResponseEntity.badRequest().body("ID карты не может быть null");
+            return ResponseEntity.badRequest().body("Card ID cannot be null");
         }
 
         cardService.blockCard(id);
-        return ResponseEntity.ok("Карта заблокирована");
+        return ResponseEntity.ok("The card is blocked");
     }
 
+    /**
+     * Unblock card response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
     @PutMapping("/unblock/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> unblockCard(@PathVariable Long id) {
         if (id == null) {
-            return ResponseEntity.badRequest().body("ID карты не может быть null");
+            return ResponseEntity.badRequest().body("Card ID cannot be null");
         }
 
         cardService.unblockCard(id);
-        return ResponseEntity.ok("Карта активирована");
+        return ResponseEntity.ok("Card activated");
     }
 
+    /**
+     * Delete card.
+     *
+     * @param id the id
+     */
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteCard(@PathVariable Long id) {
         cardService.deleteCard(id);
     }
 
+    /**
+     * Gets all cards.
+     *
+     * @param page the page
+     * @param size the size
+     * @return the all cards
+     */
     @GetMapping("/get/all")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Page<CardDto> getAllCards(@RequestParam(defaultValue = "0") int page,
@@ -67,7 +100,15 @@ public class CardController {
         return cardService.getAllCards(pageable);
     }
 
-    // ================= ROLE_USER =================
+    /**
+     * Gets user cards.
+     *
+     * @param userDetails the user details
+     * @param page        the page
+     * @param size        the size
+     * @return the user cards
+     */
+// ================= ROLE_USER =================
     @GetMapping("/get/users")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public Page<CardDto> getUserCards(@AuthenticationPrincipal UserDetails userDetails,
@@ -78,6 +119,12 @@ public class CardController {
         return cardService.getUserCards(user, pageable);
     }
 
+    /**
+     * Transfer.
+     *
+     * @param userDetails the user details
+     * @param dto         the dto
+     */
     @PostMapping("/transfer")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public void transfer(@AuthenticationPrincipal UserDetails userDetails,
@@ -86,6 +133,12 @@ public class CardController {
         cardService.transferBetweenCards(dto.getFromCardId(), dto.getToCardId(), dto.getAmount(), user);
     }
 
+    /**
+     * Request block.
+     *
+     * @param userDetails the user details
+     * @param id          the id
+     */
     @PutMapping("/requestBlock/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public void requestBlock(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
@@ -93,6 +146,13 @@ public class CardController {
         cardService.requestBlockCard(id, user);
     }
 
+    /**
+     * Gets balance.
+     *
+     * @param userDetails the user details
+     * @param id          the id
+     * @return the balance
+     */
     @GetMapping("/balance/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public BigDecimal getBalance(@AuthenticationPrincipal UserDetails userDetails,

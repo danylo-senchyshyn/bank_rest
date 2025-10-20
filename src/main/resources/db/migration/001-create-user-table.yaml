@@ -2,6 +2,11 @@ databaseChangeLog:
   - changeSet:
       id: 001
       author: admin
+      preConditions:
+        onFail: MARK_RAN
+          - not:
+              tableExists:
+                tableName: users
       changes:
         - createTable:
             tableName: users
@@ -32,5 +37,6 @@ databaseChangeLog:
               - column:
                   name: active
                   type: BOOLEAN
+                  defaultValueBoolean: true
                   constraints:
                     nullable: false

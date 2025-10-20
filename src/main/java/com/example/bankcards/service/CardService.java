@@ -20,6 +20,9 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The type Card service.
+ */
 @Service
 @RequiredArgsConstructor
 public class CardService {
@@ -27,25 +30,34 @@ public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Delete all card.
+     */
     public void deleteAllCard() {
         cardRepository.deleteAll();
     }
 
-    // ================= ADMIN =================
+    /**
+     * Create card card dto.
+     *
+     * @param dto the dto
+     * @return the card dto
+     */
+// ================= ADMIN =================
     @Transactional
     public CardDto createCard(CardCreateDto dto) {
         User owner = userRepository.findByUsername(dto.getOwnerUsername())
-                .orElseThrow(() -> new CustomException("Пользователь не найден"));
+                .orElseThrow(() -> new CustomException("User not found"));
 
         if (cardRepository.existsByNumber(dto.getNumber())) {
-            throw new CustomException("Карта с таким номером уже существует");
+            throw new CustomException("A card with this number already exists");
         }
 
         YearMonth ym = YearMonth.parse(dto.getValidTill(), DateTimeFormatter.ofPattern("MM/yy"));
         LocalDate expiryDate = ym.atEndOfMonth();
 
         Card card = Card.builder()
-                .number(dto.getNumber()) // здесь можно добавить шифрование
+                .number(dto.getNumber())
                 .owner(owner)
                 .expiryDate(expiryDate)
                 .balance(dto.getBalance())
@@ -57,62 +69,102 @@ public class CardService {
         return mapToDto(cardRepository.save(card));
     }
 
+    /**
+     * Block card.
+     *
+     * @param cardId the card id
+     */
     @Transactional
     public void blockCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new CustomException("Карта не найдена"));
+                .orElseThrow(() -> new CustomException("Map not found"));
         card.setStatus(CardStatus.BLOCKED);
         cardRepository.save(card);
     }
 
+    /**
+     * Unblock card.
+     *
+     * @param cardId the card id
+     */
     @Transactional
     public void unblockCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new CustomException("Карта не найдена"));
+                .orElseThrow(() -> new CustomException("Map not found"));
         card.setStatus(CardStatus.ACTIVE);
         cardRepository.save(card);
     }
 
+    /**
+     * Delete card.
+     *
+     * @param cardId the card id
+     */
     @Transactional
     public void deleteCard(Long cardId) {
         if(!cardRepository.existsById(cardId))
-            throw new CustomException("Карта не найдена");
+            throw new CustomException("Map not found");
         cardRepository.deleteById(cardId);
     }
 
+    /**
+     * Gets all cards.
+     *
+     * @param pageable the pageable
+     * @return the all cards
+     */
     public Page<CardDto> getAllCards(Pageable pageable) {
         return cardRepository.findAll(pageable).map(this::mapToDto);
     }
 
-    /// ================= USER =================
+    /**
+     * ================= USER ================= @param user the user
+     *
+     * @param pageable the pageable
+     * @return the user cards
+     */
     public Page<CardDto> getUserCards(User user, Pageable pageable) {
         return cardRepository.findAllByOwner(user, pageable).map(this::mapToDto);
     }
 
+    /**
+     * Request block card.
+     *
+     * @param cardId the card id
+     * @param user   the user
+     */
     @Transactional
     public void requestBlockCard(Long cardId, User user) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new CustomException("Карта не найдена"));
+                .orElseThrow(() -> new CustomException("Map not found"));
 
         if(!card.getOwner().getId().equals(user.getId()))
-            throw new AccessDeniedException("Можно блокировать только свои карты");
+            throw new AccessDeniedException("You can only block your cards");
 
         card.setStatus(CardStatus.BLOCKED);
         cardRepository.save(card);
     }
 
+    /**
+     * Transfer between cards.
+     *
+     * @param fromId the from id
+     * @param toId   the to id
+     * @param amount the amount
+     * @param user   the user
+     */
     @Transactional
     public void transferBetweenCards(Long fromId, Long toId, BigDecimal amount, User user) {
         Card from = cardRepository.findById(fromId)
-                .orElseThrow(() -> new CustomException("Карта отправителя не найдена"));
+                .orElseThrow(() -> new CustomException("Sender's card not found"));
         Card to = cardRepository.findById(toId)
-                .orElseThrow(() -> new CustomException("Карта получателя не найдена"));
+                .orElseThrow(() -> new CustomException("Beneficiary's card not found"));
 
         if(!from.getOwner().getId().equals(user.getId()) || !to.getOwner().getId().equals(user.getId()))
-            throw new AccessDeniedException("Переводы возможны только между своими картами");
+            throw new AccessDeniedException("Transfers are possible only between your cards");
 
         if(from.getBalance().compareTo(amount) < 0)
-            throw new CustomException("Недостаточно средств");
+            throw new CustomException("Insufficient funds");
 
         from.setBalance(from.getBalance().subtract(amount));
         to.setBalance(to.getBalance().add(amount));
@@ -121,12 +173,19 @@ public class CardService {
         cardRepository.save(to);
     }
 
+    /**
+     * Gets balance.
+     *
+     * @param cardId the card id
+     * @param user   the user
+     * @return the balance
+     */
     public BigDecimal getBalance(Long cardId, User user) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new CustomException("Карта не найдена"));
+                .orElseThrow(() -> new CustomException("Map not found"));
 
         if(!card.getOwner().getId().equals(user.getId()))
-            throw new AccessDeniedException("Можно смотреть баланс только своих карт");
+            throw new AccessDeniedException("You can only view the balance of your cards");
 
         return card.getBalance();
     }

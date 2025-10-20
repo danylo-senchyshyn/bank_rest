@@ -13,24 +13,38 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * The type User service.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CardRepository cardRepository;
 
-    // Найти пользователя по username
+    /**
+     * Find by username user.
+     *
+     * @param username the username
+     * @return the user
+     */
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException("Пользователь не найден"));
+                .orElseThrow(() -> new CustomException("User not found"));
     }
 
-    // Создать нового пользователя (только ADMIN)
+    /**
+     * Create user user.
+     *
+     * @param username the username
+     * @param password the password
+     * @param role     the role
+     * @return the user
+     */
     public User createUser(String username, String password, Role role) {
         if(userRepository.findByUsername(username).isPresent()) {
-            throw new CustomException("Пользователь с таким username уже существует");
+            throw new CustomException("A user with this username already exists");
         }
 
         User user = User.builder()
@@ -45,13 +59,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Удалить всех пользователей (для тестов)
+    /**
+     * Delete all users.
+     */
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
 
 
-    // Получить всех пользователей (для админа)
+    /**
+     * Gets all users.
+     *
+     * @return the all users
+     */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

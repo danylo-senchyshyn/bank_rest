@@ -16,6 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Auth controller.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -25,6 +28,12 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Register response entity.
+     *
+     * @param dto the dto
+     * @return the response entity
+     */
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDto> register(@RequestBody AuthRequestDto dto) {
         try {
@@ -36,6 +45,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Login auth response dto.
+     *
+     * @param dto the dto
+     * @return the auth response dto
+     */
     @PostMapping("/login")
     public AuthResponseDto login(@RequestBody AuthRequestDto dto) {
         try {
@@ -46,7 +61,7 @@ public class AuthController {
             String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
             return new AuthResponseDto(token);
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Неверный логин или пароль");
+            throw new RuntimeException("Invalid login or password");
         }
     }
 }

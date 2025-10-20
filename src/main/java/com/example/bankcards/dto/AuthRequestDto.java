@@ -3,6 +3,9 @@ package com.example.bankcards.dto;
 import com.example.bankcards.entity.Role;
 import lombok.*;
 
+/**
+ * The type Auth request dto.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

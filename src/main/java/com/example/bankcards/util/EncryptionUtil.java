@@ -9,6 +9,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+/**
+ * The type Encryption util.
+ */
 @Component
 public class EncryptionUtil {
 
@@ -24,6 +27,12 @@ public class EncryptionUtil {
         SECRET = secretFromProperties;
     }
 
+    /**
+     * Encrypt string.
+     *
+     * @param data the data
+     * @return the string
+     */
     public static String encrypt(String data) {
         try {
             SecretKey key = new SecretKeySpec(SECRET.getBytes(), ALGO);
@@ -32,10 +41,16 @@ public class EncryptionUtil {
             byte[] encrypted = cipher.doFinal(data.getBytes());
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка шифрования", e);
+            throw new RuntimeException("Encryption error", e);
         }
     }
 
+    /**
+     * Decrypt string.
+     *
+     * @param encryptedData the encrypted data
+     * @return the string
+     */
     public static String decrypt(String encryptedData) {
         try {
             SecretKey key = new SecretKeySpec(SECRET.getBytes(), ALGO);
@@ -44,7 +59,7 @@ public class EncryptionUtil {
             byte[] decoded = Base64.getDecoder().decode(encryptedData);
             return new String(cipher.doFinal(decoded));
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка дешифрования", e);
+            throw new RuntimeException("Decryption error", e);
         }
     }
 }
